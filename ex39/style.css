@@ -3,14 +3,14 @@
   width: 100%;
   border-collapse: collapse;
 }
-
-#customers td, #customers th {
+#customers td, #customers th 
+{
   font-size: 0.9em;
   border: 1px solid #98bf21;
   padding: 3px 7px 2px 7px;
 }
-
-#customers th {
+#customers th 
+{
   font-size: 1.1em;
   text-align: left;
   padding-top: 5px;
@@ -18,8 +18,8 @@
   background-color: #A7C942;
   color: #ffffff;
 }
-
-#customers tr.alt td {
+#customers tr.alt td 
+{
   color: #000000;
   background-color: #EAF2D3;
 }
