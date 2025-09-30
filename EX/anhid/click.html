@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Click để đổi ảnh</title>
+    <style>
+        body {
+            text-align: center;
+            margin-top: 50px;
+        }
+        img {
+            width: 150px;
+            height: 200px;
+            cursor: pointer; /* con trỏ chuột thành tay khi hover */
+            transition: transform 0.5s; /* hiệu ứng mượt khi lật */
+        }
+        img.flip {
+            transform: rotateY(180deg); /* lật hình */
+        }
+    </style>
+</head>
+<body>
+    <h2>Click vào ảnh để đổi</h2>
+    <img id="imageToggle" src="1.jpg" alt="Ảnh 1">
+
+    <script>
+        const img = document.getElementById("imageToggle");
+        let isImage1 = true; // trạng thái hiện tại
+
+        img.addEventListener("click", function() {
+            if(isImage1) {
+                img.src = "2.jpg"; // đổi sang ảnh 2
+            } else {
+                img.src = "1.jpg"; // đổi về ảnh 1
+            }
+            isImage1 = !isImage1; // đảo trạng thái
+        });
+    </script>
+</body>
+</html>

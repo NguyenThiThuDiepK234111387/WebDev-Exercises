@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <title> Thu Diệp học tạo bảng màu xen kẽ kết hợp với di chuyển chuột </title>
+        <style>
+            thead{
+                background-color: purple;
+                font-weight: bolder;
+                color: white;
+            }
+            tbody tr:nth-child(2n)
+            {
+                background-color: aqua;
+            }
+            tbody tr:nth-child(2n+1)
+            {
+                background-color: yellow
+                ;
+            }
+            tfoot
+            {
+                background-color: green;
+                font-weight: bold;
+                color: palevioletred;
+            }
+            tbody tr:hover
+            {
+                color: red;
+                font-style: italic;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <table border="1">
+            <caption> List of products </caption>
+            <thead>
+                <tr>
+                    <th> ID</th>
+                    <th> Name</th>
+                    <th> Quantity</th>
+                    <th> Price</th>
+                </tr>
+            </thead>
+            <tbody> 
+                <tr> 
+                    <td> P01</td>
+                    <td> Coca</td>
+                    <td>11 </td>
+                    <td> 30.000</td>
+                </tr>
+                <tr> 
+                    <td> P02</td>
+                    <td> Pepsi </td>
+                    <td> 21</td>
+                    <td> 10.00</td>
+                </tr>
+                <tr> 
+                    <td>P03 </td>
+                    <td> Sting</td>
+                    <td>12 </td>
+                    <td> 15.000</td>
+                </tr>
+                <tr> 
+                    <td>P04 </td>
+                    <td> Fanta</td>
+                    <td> 54</td>
+                    <td> 20.000</td>
+                </tr>
+                <tr> 
+                    <td>P05 </td>
+                    <td> Aqu</td>
+                    <td> 100</td>
+                    <td> 5.000</td>
+                </tr>
+        </tbody>
+        <tfoot>
+            <tr> 
+                <td colspan="4"> Designed by me </td>
+            </tr>
+        </tfoot>
+    </body>
+</html>

@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title> Thu Diệp tạo table và tô màu theo cột, ẩn cột </title>
+    </head>
+    <body>
+        <table border="1">
+            <colgroup>
+                <col span="1"/>
+                <col style="background-color: pink;"/>  
+                <col style="visibility: collapse;">
+                <col span="1"/> 
+                <col style="background-color: blueviolet;"/>
+          
+            </colgroup>
+            <caption> List of customer </caption>
+            <thead>
+                <tr>
+                    <th rowspan="2">ID</th>
+                    <th rowspan="2">Name</th>
+                    <th colspan="2">Phone</th>
+                    <th rowspan="2">Email</th>
+                </tr>
+                <tr>
+                    <th> Home phone </th>
+                    <th> Work phone </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> CUS01 </td>
+                    <td> John</td>
+                    <td> 09014568752</td>
+                    <td> 05946552330</td>
+                    <td> John@gmail.com</td>
+                </tr>
+                <tr>
+                    <td> CUS02 </td>
+                    <td> Peter</td>
+                    <td> 00544662364</td>
+                    <td> 01235864723</td>
+                    <td> Petern@gmail.com</td>
+                </tr>
+                <tr>
+                    <td> CUS03 </td>
+                    <td> ben</td>
+                    <td> 08575555727</td>
+                    <td> 07893214574</td>
+                    <td> nts@gmail.com</td>
+                </tr>
+                <tr>
+                    <td> CUS04 </td>
+                    <td> Keen</td>
+                    <td> 06548934542</td>
+                    <td> 06542315528</td>
+                    <td> Kenny@gmail.com</td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
