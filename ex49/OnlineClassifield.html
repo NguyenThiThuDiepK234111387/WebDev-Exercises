@@ -1,0 +1,94 @@
+<html>
+    <head>
+        <title>Thu Diệp - Ex49</title>
+        
+    </head>
+    <body style="background-color: aqua;">
+        <h2 style="color: red;">Online Classifieds Search Form</h2>
+        <hr/>
+
+        <form>
+            <p><b>1, Search for a classified in the following sections:</b></p>
+            <table>
+                <tr>
+                    <td>
+                        <input type="radio" name="sections" id="sections1" value="Employment">
+                        <label for="sections1">Employment</label>
+                    </td>
+                    <td>
+                        <input type="radio" name="sections" id="sections2" value="Personal">
+                        <label for="sections2">Personal</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="sections" id="sections3" value="For Sale" checked>
+                        <label for="sections3">For Sale</label>
+                    </td>
+                    <td>
+                        <input type="radio" name="sections" id="sections4" value="Miscellaneous">
+                        <label for="sections4">Miscellaneous</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="sections" id="sections5" value="Housing">
+                        <label for="sections5">Housing</label>
+                    </td>
+                    <td>
+                        <input type="radio" name="sections" id="sections6" value="All">
+                        <label for="sections6">All of the above</label>
+                    </td>
+                </tr>
+            </table>
+
+            <p><b>2, Search the following publications:</b></p>
+            <table>
+                <tr>
+                    <td>
+                        <input type="checkbox" name="publications" id="pub1" value="Midwest Times" checked>
+                        <label for="pub1">Midwest Times</label>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="publications" id="pub2" value="Modern News">
+                        <label for="pub2">Modern News</label>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="publications" id="pub3" value="Employment Today">
+                        <label for="pub3">Employment Today</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" name="publications" id="pub4" value="Great Lakes Classifieds" checked>
+                        <label for="pub4">Great Lakes Classifieds</label>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="publications" id="pub5" value="Middleton Daily">
+                        <label for="pub5">Middleton Daily</label>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="publications" id="pub6" value="Cashtown Daily News">
+                        <label for="pub6">Cashtown Daily News</label>
+                    </td>
+                </tr>
+            </table>
+
+            <p><b>3, From to:</b> 
+                <input type="date" name="fromDate"> 
+                to <input type="date" name="toDate">
+            </p>
+
+            <p><b>4, Enter a few keywords to describe the classified.</b></p>
+            <input type="text" name="keywords">
+
+            <p><b>5, Click one of the options below:</b></p>
+            <div class="buttons">
+                <input type="image" src="images/Search.gif" alt="Search">
+                <input type="image" src="images/Help.gif" alt="Help">
+                <input type="image" src="images/Cancel.gif" alt="Cancel">
+            </div>
+        </form>
+    </div>
+</body>
+</html>

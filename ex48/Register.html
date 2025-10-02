@@ -1,0 +1,151 @@
+<html>
+    <head>
+        <title> Thu Diệp - ex48 </title>
+    </head>
+    <body style="background-color: cornflowerblue; text-align: center;">
+        <p>
+            <img src="images/Jackson.gif"/>
+        </p>
+        <h2> Registration Form </h2>
+        <p>
+            Register your Jackson Electronics product here
+        </p>
+        <form>
+            <table>
+                <tr>
+                    <td> First Name</td>
+                    <td> 
+                        <input type="text" name="firstname" id="firstname"/>
+                    </td>
+                    <td> Last Name</td>
+                    <td> 
+                        <input type="text" name="lastname" id="lastname"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Address #1</td>
+                    <td> 
+                        <input type="text" name="address1" id="address1"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Address #2</td>
+                    <td> 
+                        <input type="text" name="address2" id="address2"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td> City: </td>
+                    <td> 
+                        <input type="text" name="city" id="city"/>
+                    </td>
+                    <td> State: </td>
+                    <td> 
+                        <input type="text" name="state" id="state"/>
+                    </td>
+                    <td> Zip: </td>
+                    <td> 
+                        <input type="text" name="zip" id="zip"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Country:</td>
+                    <td>
+                        <input type="text" name="country" value="United States"/>
+                    </td>
+                </tr>
+            </table>
+            <hr/>
+            <table>
+                <tr>
+                    <td>Product: </td>
+                    <td> 
+                    <select name="product" id="product">
+                        <option value="1"> ScanMaster</option>
+                    </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Date Purchased:</td>
+                    <td>
+                        <input type="text" name="datepurchased" id="datepurchased">
+                    </td>
+                </tr>
+                <tr>
+                    <td> Serial #:</td>
+                    <td>
+                        <input type="text" name="serial" id="serial">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Used for:</td>
+                    <td>
+                        <input type="radio" name="usedfor" id="usedfor1" value="home"/>
+                        <label for="usedfor1">Home</label>
+                    </td>
+                    <td>
+                        <input type="radio" name="usedfor" id="usedfor2" value="edu"/>
+                        <label for="usedfor2">Educational Institution</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="radio" name="usedfor" id="usedfor3" value="business"/>
+                        <label for="usedfor3">Business</label>
+                    </td>
+                    <td>
+                        <input type="radio" name="usedfor" id="usedfor4" value="other"/>
+                        <label for="usedfor4">Other</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="radio" name="usedfor" id="usedfor5" value="government"/>
+                        <label for="usedfor5">Government</label>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td> System (check all that apply)</td>
+                    <td>
+                        <input type="checkbox" name="sys1" id="sys1"/>
+                        <label for="sys1">Windows 1</label>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="sys2" id="sys2"/>
+                        <label for="sys2">UNIX</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="checkbox" name="sys3" id="sys3"/>
+                        <label for="sys3">Other</label>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="sys4" id="sys4"/>
+                        <label for="sys4">Windows 1</label>
+                    </td>
+                </tr>
+            </table>
+            <hr/>
+            <table>
+                <tr>
+                    <td>Comments?</td>
+                    <td> 
+                        <textarea name="cmt" id="cmt" rows="5" cols="40"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td colspan="2" style="text-align: center;" >
+                        <button type="submit">Click to register</button>
+                        <button type="reset">Click to cancel</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>
