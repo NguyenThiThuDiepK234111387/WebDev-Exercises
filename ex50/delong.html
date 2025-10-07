@@ -1,0 +1,146 @@
+<html>
+    <head>
+        <title> Thu Diệp ex50</title>
+    </head>
+    <body style="background-color: lightblue;">
+        <p align="center"> 
+        <img src="images/DeLong.jpg"/>
+        </p>
+        <h2> Travel Expense Report </h2>
+        <hr/>
+        <form>
+            <table>
+                <tr>
+                    <td> 1, First Name:</td>
+                    <td> 
+                        <input type="text" name="firstname" id="firstname">
+                    </td>
+                    <td> Last Name:</td>
+                    <td>
+                        <input type="text" name="lastname" id="lastname">
+                    </td>
+                </tr>
+                <tr>
+                    <td> 2, Social Security Number:</td>
+                    <td> 
+                        <input type="text" name="socialnumber" id="socialnumber">
+                    </td>
+                </tr>
+                <tr>
+                    <td> 3, Department</td>
+                    <td>
+                        <select name="department">
+                            <option value="accounting">Accounting</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>4. Describe the purpose of your trip:</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <input type="text" name="describe" id="describe" 
+                            style="width: 400px; height: 80px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td> 5, Itemize your travel expenses </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <table border="2">
+                            <tr>
+                                <th> Date</th>
+                                <th> Description</th>
+                                <th> Category </th>
+                                <th> Amount </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="date" name="date1" id="date1">
+                                </td>
+                                <td>
+                                    <input type="text" name="des1" id="des1">
+                                </td>
+                                <td>
+                                    <select name="Category">
+                                        <option value="meal"> Meal</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" name="amt1" id="amt1">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="date" name="date2" id="date2">
+                                </td>
+                                <td>
+                                    <input type="text" name="des2" id="des2">
+                                </td>
+                                <td>
+                                    <select name="Category">
+                                        <option value="meal"> Meal</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" name="amt2" id="amt2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="date" name="date3" id="date3">
+                                </td>
+                                <td>
+                                    <input type="text" name="des3" id="des3">
+                                </td>
+                                <td>
+                                    <select name="Category">
+                                        <option value="meal"> Meal</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" name="amt3" id="amt3">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="date" name="date4" id="date4">
+                                </td>
+                                <td>
+                                    <input type="text" name="des4" id="des4">
+                                </td>
+                                <td>
+                                    <select name="Category">
+                                        <option value="meal"> Meal</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" name="amt4" id="amt4">
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td> 6, Have you submitted your receipts?</td>
+                    <td>
+                        <input type="radio" name="receipts" id="yes"> Yes
+                        <input type="radio" name="receipts" id="no"> No
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="submit"> Submit travel expenses </button>
+                        <button type="reset" > Reset </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        Question? Contact Debbie Larson in Accounting (ext. 2150)                     
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>
