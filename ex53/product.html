@@ -1,0 +1,72 @@
+<html>
+    <head>
+        <title>Thu Diep - EX53</title>
+        <script>
+            function calcItem(qtyId, price, itemId) {
+                let qty = parseFloat(document.getElementById(qtyId).value) || 0;
+                let itemTotal = qty * price;
+                document.getElementById(itemId).value = itemTotal.toFixed(2);
+                calcTotal();
+            }
+
+            function calcTotal() {
+                let i1 = parseFloat(document.getElementById("item1").value) || 0;
+                let i2 = parseFloat(document.getElementById("item2").value) || 0;
+                let i3 = parseFloat(document.getElementById("item3").value) || 0;
+                let total = i1 + i2 + i3;
+                document.getElementById("text").value = total.toFixed(2);
+            }
+
+            function handleEnter(event, qtyId, price, itemId) {
+                if (event.key === "Enter") {
+                    event.preventDefault(); // Ngăn form submit sớm
+                    calcItem(qtyId, price, itemId);
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <form action="productget.html" method="get">
+            <table border="1" cellspacing="0" cellpadding="8" width="80%" align="center" rules="none" frame="box">
+                <tr>
+                    <th>Part Number</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Item total</th>
+                </tr>
+                <tr>
+                    <td>C112</td>
+                    <td>Mouse</td>
+                    <td>19.95$</td>
+                    <td><input type="text" name="qty1" id="qty1" onkeydown="handleEnter(event, 'qty1', 19.95, 'item1')"></td>
+                    <td><input type="text" name="item1" id="item1" readonly></td>
+                </tr>
+                <tr>
+                    <td>B124</td>
+                    <td>Keyboard US</td>
+                    <td>29.95$</td>
+                    <td><input type="text" name="qty2" id="qty2" onkeydown="handleEnter(event, 'qty2', 29.95, 'item2')"></td>
+                    <td><input type="text" name="item2" id="item2" readonly></td>
+                </tr>
+                <tr>
+                    <td>U125</td>
+                    <td>USB KingMax</td>
+                    <td>39.95$</td>
+                    <td><input type="text" name="qty3" id="qty3" onkeydown="handleEnter(event, 'qty3', 39.95, 'item3')"></td>
+                    <td><input type="text" name="item3" id="item3" readonly></td>
+                </tr>
+                <tr><td colspan="5"><hr size="1" noshade></td></tr>
+                <tr>
+                    <td colspan="4" align="right">Total</td>
+                    <td><input type="text" id="text" name="text" readonly></td>
+                </tr>
+                <tr>
+                    <td colspan="5" align="right">
+                        <button type="submit" style="background-color: orange; color: white; border: none; padding: 3px 10px;">Sum</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>

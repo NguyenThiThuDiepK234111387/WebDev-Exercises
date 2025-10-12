@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title> Thu Diep get contact</title>
+        <script>
+            function getUrlVars() {
+                var vars = {};
+                var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+                    function(m, key, value) {
+                        vars[key] = decodeURIComponent(value.replace(/\+/g, ' '));
+                    });
+                return vars;
+            }
+            var fullname=unescape(getUrlVars()["fullname"]);
+            var email=unescape(getUrlVars()["email"]);
+            var sendto=unescape(getUrlVars()["sendto"]);
+            var title=unescape(getUrlVars()["title"]);
+            var content=unescape(getUrlVars()["content"]);
+        </script>
+    </head>
+    <body>
+        <form>
+            <h2>Contact Information Received</h2>
+            <table border="1">
+                <tr>
+                    <td>Full name</td>
+                    <td id="idname"></td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td id="idemail"></td>
+                </tr>
+                <tr>
+                    <td>Send to</td>
+                    <td id="idsendto"></td>
+                </tr>
+                <tr>
+                    <td>Title</td>
+                    <td id="idtitle"></td>
+                </tr>
+                <tr>
+                    <td>Content</td>
+                    <td id="idcontent"></td>
+                </tr>
+            </table>
+        </form>
+        <script>
+            document.getElementById("idname").innerHTML = fullname;
+            document.getElementById("idemail").innerHTML = email;
+            document.getElementById("idsendto").innerHTML = sendto;
+            document.getElementById("idtitle").innerHTML = title;
+            document.getElementById("idcontent").innerHTML = content;
+        </script>
+    </body>
+</html>
