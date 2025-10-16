@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <title> Thu Diệp - EX55 </title>
+        <script>
+            function find_solution()
+            {
+                var a=parseFloat(document.my_form.td_a.value);
+                var b=parseFloat(document.my_form.td_b.value);
+                var c=parseFloat(document.my_form.td_c.value);
+                var result=document.getElementById("td_result");
+
+                var delta=b*b-4*a*c;
+
+                if (delta<0)
+                {
+                    result.innerHTML="Null";
+                }
+                else if (delta==0)
+                {
+                    var x=-b/(2*a);
+                    result.innerHTML="x1=x2"+x.toFixed(2);
+                }
+                else
+                {
+                    var x1=(-b+Math.sqrt(delta))/(2*a);
+                    var x2=(-b-Math.sqrt(delta))/(2*a);
+                    result.innerHTML="x1="+x1.toFixed(2)+";x2="+x2.toFixed(2);
+                }
+            }
+            function clear_all()
+            {
+                document.my_form.reset();
+                document.getElementById("td_result").innerHTML="";
+            }
+        </script>
+    </head>
+    <body>
+        <form name="my_form"> 
+            <table border="1">
+                <tr>
+                    <td colspan="2" align="center" style="background-color: aqua;">The quadratic equation</td>
+                </tr>
+                <tr>
+                    <td>a:</td>
+                    <td>
+                        <input type="number" name="td_a" id="td_a"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>b:</td>
+                    <td>
+                        <input type="number" name="td_b" id="td_b"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>c:</td>
+                    <td>
+                        <input type="number" name="td_c" id="td_c"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Result:</td>
+                    <td id="td_result" style="color: red;">  </td>
+                </tr>
+                <tr>
+                    <td> </td>
+                    <td>
+                        <button type="button" onclick="find_solution()"> Find Solution </button>
+                        <button type="button" onclick="clear_all()"> Clear </button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>

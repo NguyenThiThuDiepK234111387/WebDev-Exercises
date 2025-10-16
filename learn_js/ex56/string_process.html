@@ -1,0 +1,113 @@
+<html>
+    <head>
+        <title>Thu Diệp - EX56</title>
+        <style>
+            textarea {
+                width: 95%;
+                height: 80px;
+            }
+            button {
+                width: 100%;
+                padding: 6px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <form name="my_form">
+            <table>
+                <tr>
+                    <td colspan="2">
+                        <h2>Using String Processing Functions</h2>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <fieldset>
+                            <legend> <h3> Input Data:</h3></legend>
+                            <textarea id="td_input"></textarea>
+                        </fieldset>
+                    </td>
+                    <td>
+                        <fieldset>
+                            <legend><h3>Result: </h3></legend>
+                            <textarea id="td_result"></textarea>
+                        </fieldset>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><button type="button" onclick="enter_data()">Enter Data</button></td>
+                    <td><button type="button" onclick="count_upper()">Count the number of uppercase characters</button></td>
+                </tr>
+                <tr>
+                    <td><button type="button" onclick="upper_dis()">Uppercase display</button></td>
+                    <td><button type="button" onclick="output_one()">Output one word per line</button></td>
+                </tr>
+                <tr>
+                    <td><button type="button" onclick="low_dis()">Lowercase display</button></td>
+                    <td><button type="button" onclick="word_count()">Word count</button></td>
+                </tr>
+                <tr>
+                    <td><button type="button" onclick="count_low()">Count the number of lowercase characters</button></td>
+                    <td><button type="button" onclick="print_vowels_consonants()">Print vowels, consonants</button></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button type="button" onclick="w3c()">W3C's String Processing Website</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+        <script>
+            function enter_data() {
+                document.getElementById("td_result").value = document.getElementById("td_input").value;
+            }
+
+            function count_upper() {
+                const input = document.getElementById("td_input").value;
+                const count = (input.match(/[A-Z]/g) || []).length;
+                document.getElementById("td_result").value = "Uppercase letters: " + count;
+            }
+
+            function upper_dis() {
+                document.getElementById("td_result").value = document.getElementById("td_input").value.toUpperCase();
+            }
+
+            function output_one() {
+                const input = document.getElementById("td_input").value;
+                document.getElementById("td_result").value = input.split(/\s+/).join("\n");
+            }
+
+            function low_dis() {
+                document.getElementById("td_result").value = document.getElementById("td_input").value.toLowerCase();
+            }
+
+            function word_count() {
+                const text = document.getElementById("td_input").value.trim();
+                const words = text === "" ? 0 : text.split(/\s+/).length;
+                document.getElementById("td_result").value = "Word count: " + words;
+            }
+
+            function count_low() {
+                const input = document.getElementById("td_input").value;
+                const count = (input.match(/[a-z]/g) || []).length;
+                document.getElementById("td_result").value = "Lowercase letters: " + count;
+            }
+
+            function print_vowels_consonants() {
+                const input = document.getElementById("td_input").value.toLowerCase();
+                const vowels = (input.match(/[aeiou]/g) || []).length;
+                const consonants = (input.match(/[bcdfghjklmnpqrstvwxyz]/g) || []).length;
+                document.getElementById("td_result").value =
+                    "Vowels: " + vowels + "\nConsonants: " + consonants;
+            }
+
+            function w3c() {
+                window.open("https://myuel.uel.edu.vn/", "_blank");
+            }
+        </script>
+    </body>
+</html>

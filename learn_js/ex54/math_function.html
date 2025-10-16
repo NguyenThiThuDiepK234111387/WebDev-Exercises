@@ -1,0 +1,76 @@
+<html>
+    <head>
+        <title> Thu Diệp - EX54 </title>
+    </head>
+    <body>
+        <form name="my_form"> 
+            <table border="1">
+                <tr>
+                    <td>a:</td>
+                    <td>
+                        <input type="number" name="td_a" id="td_a"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>b:</td>
+                    <td>
+                        <input type="number" name="td_b" id="td_b"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>c:</td>
+                    <td>
+                        <input type="number" name="td_c" id="td_c"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Result:</td>
+                    <td id="td_result">  </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button type="button" onclick="max()"> MAX</button>
+                        <button type="button" onclick="min()"> MIN</button>
+                        <button type="button" onclick="sina()"> Sin(a)</button>
+                        <button type="button" onclick="cosa()"> Cos(a)</button>
+                        <button type="button" onclick="a_pow_b()"> a^b</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <script type="text/javascript">
+            function getvalues()
+            {
+                var a=parseFloat(document.getElementById("td_a").value);
+                var b=parseFloat(document.getElementById("td_b").value);
+                var c=parseFloat(document.getElementById("td_c").value);
+                return{a,b,c}
+            }
+            function max()
+            {
+                var v=getvalues();
+                document.getElementById("td_result").innerText=Math.max(v.a,v.b,v.c);
+            }
+            function min()
+            {
+                var v=getvalues();
+                document.getElementById("td_result").innerText=Math.min(v.a,v.b,v.c);
+            }
+            function sina()
+            {
+                var v=getvalues();
+                document.getElementById("td_result").innerText=Math.sin(v.a);
+            }
+            function cosa()
+            {
+                var v=getvalues();
+                document.getElementById("td_result").innerText=Math.cos(v.a);
+            }
+            function a_pow_b()
+            {
+                var v=getvalues();
+                document.getElementById("td_result").innerText=Math.pow(v.a,v.b);
+            }
+        </script>
+    </body>
+</html>
