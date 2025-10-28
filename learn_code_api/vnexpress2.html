@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VnExpress - Kinh Doanh</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .news-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .news-content {
+            padding: 20px;
+        }
+
+        .news-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-description {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85em;
+            color: #999;
+        }
+
+        .news-date {
+            display: flex;
+            align-items: center;
+        }
+
+        .read-more {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .read-more:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        footer {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            color: #666;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .logo {
+                font-size: 2em;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">VnExpress</div>
+            <div class="subtitle">Tin tức Kinh Doanh - Cập nhật 24/7</div>
+        </header>
+
+        <div class="filter-bar">
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 Tìm kiếm tin tức...">
+        </div>
+
+        <div class="news-grid" id="newsGrid"></div>
+
+        <footer>
+            <p>&copy; 2025 VnExpress. Tất cả các quyền được bảo lưu.</p>
+        </footer>
+    </div>
+
+    <script>
+        const newsData = [
+            {
+                title: "Việt Nam dự kiến vận hành thí điểm sàn giao dịch carbon vào cuối 2026",
+                description: "Theo Tổng thư ký Quốc hội, Việt Nam đặt mục tiêu bước đầu hình thành thị trường carbon, vận hành thí điểm sàn giao dịch tín chỉ carbon vào cuối 2026.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/28/202510280837039446-z7162606245-9984-3535-1761628341.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=YiEla4XnCH9fS8BzFdXPDw",
+                link: "https://vnexpress.net/viet-nam-du-kien-van-hanh-thi-diem-san-giao-dich-carbon-vao-cuoi-2026-4956659.html",
+                date: "28/10/2025 12:11"
+            },
+            {
+                title: "Novaland lỗ hơn nghìn tỷ đồng",
+                description: "Doanh thu tài chính giảm mạnh và lỗ chênh lệch tỷ giá khiến lợi nhuận Novaland trong quý III âm hơn 1.153 tỷ đồng.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/28/img-9171-fb-1755773040-1761621-1201-5302-1761621420.png?w=1200&h=0&q=100&dpr=1&fit=crop&s=6Or899Ka7bVqU79ljQ5Aww",
+                link: "https://vnexpress.net/novaland-lo-hon-nghin-ty-dong-4956689.html",
+                date: "28/10/2025 11:37"
+            },
+            {
+                title: "Mỗi lượng vàng giảm gần 2 triệu đồng",
+                description: "Giá vàng trong nước giảm gần 2 triệu mỗi lượng theo thị trường quốc tế, song mức chênh lệch vẫn neo cao gần 20 triệu đồng.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/28/233a0916-1761622464-1761622485-6741-1761622575.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=ygkDORp_vtaQwaLURKghdQ",
+                link: "https://vnexpress.net/moi-luong-vang-giam-gan-2-trieu-dong-4956698.html",
+                date: "28/10/2025 11:10"
+            },
+            {
+                title: "Phúc Long đạt doanh thu kỷ lục từ khi về tay Masan",
+                description: "Chuỗi trà và cà phê Phúc Long có doanh thu 516 tỷ đồng trong quý III, mức cao nhất từ khi về tay Masan, nhờ bán bánh và làm mới thương hiệu.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/28/6389482824972952469127629-1761-6732-7291-1761617785.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=dl5gtPTzzITjt55Z9ovRUA",
+                link: "https://vnexpress.net/phuc-long-dat-doanh-thu-ky-luc-tu-khi-ve-tay-masan-4956627.html",
+                date: "28/10/2025 10:11"
+            },
+            {
+                title: "Amazon có thể sa thải 30.000 nhân viên",
+                description: "Amazon sắp có đợt cắt giảm nhân sự lớn nhất lịch sử, với số lao động tương đương 10% nhân viên văn phòng hiện tại.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/28/amazon-new-jersey-1761615769-1-7931-1760-1761615856.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=PLpyWElJ5FQ-3gOQHVl0_g",
+                link: "https://vnexpress.net/amazon-co-the-sa-thai-30-000-nhan-vien-4956561.html",
+                date: "28/10/2025 08:53"
+            },
+            {
+                title: "Giá vàng thế giới lao dốc, Wall Street tăng mạnh",
+                description: "Mỗi ounce vàng giảm tới 130 USD phiên đầu tuần, trong khi cả ba chỉ số của chứng khoán Mỹ cùng lên mức cao kỷ lục mới.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/28/goldbarreuters-1761610498-3497-1761610506.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=6uGqrCW9pXL6fJoGkyoNKg",
+                link: "https://vnexpress.net/gia-vang-the-gioi-lao-doc-wall-street-tang-manh-4956559.html",
+                date: "28/10/2025 07:26"
+            },
+            {
+                title: "Intel chuyển thêm sản xuất đến Việt Nam",
+                description: "Intel đang có kế hoạch chuyển hoạt động lắp ráp, đóng gói và kiểm định từ nhà máy tại Costa Rica sang Việt Nam.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/25/ipv-5-1761364802-1761364819-6780-1761365122.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=Wsyz1ijjfAKX4uMh_d_kLg",
+                link: "https://vnexpress.net/intel-chuyen-them-san-xuat-den-viet-nam-4955642.html",
+                date: "25/10/2025 12:24"
+            },
+            {
+                title: "Vingroup xây đại đô thị xanh 6.300 ha tại thủ đô Congo",
+                description: "Vingroup phát triển đại đô thị ven sông rộng 6.300 ha và hệ thống giao thông xanh tại thủ đô Kinshasa, Cộng hòa Dân chủ Congo.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/25/1-1761389134-1761389158-4735-1761389326.png?w=1200&h=0&q=100&dpr=1&fit=crop&s=5-8Adxjq3HtI3YMfGzmJ4A",
+                link: "https://vnexpress.net/vingroup-xay-dai-do-thi-xanh-6-300-ha-tai-thu-do-congo-4955780.html",
+                date: "25/10/2025 18:00"
+            },
+            {
+                title: "Việt - Mỹ công bố tuyên bố chung về Hiệp định thương mại đối ứng",
+                description: "Việt Nam và Mỹ công bố tuyên bố chung về khuôn khổ Hiệp định thương mại đối ứng, công bằng và cân bằng.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/26/vnapotalthutuongphamminhchinht-6663-4038-1761480778.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=pPkxD6KiEWCmGp7qjJVaAQ",
+                link: "https://vnexpress.net/viet-my-cong-bo-tuyen-bo-chung-ve-hiep-dinh-thuong-mai-doi-ung-4955976.html",
+                date: "26/10/2025 17:45"
+            },
+            {
+                title: "Hãng bay hàng đầu Mỹ trở lại Việt Nam",
+                description: "United Airlines, một trong 3 hãng lớn nhất Mỹ về quy mô đội bay, vừa khai thác trở lại đường bay đến TP HCM.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/27/unitedairlines-1761562877-7017-1761562894.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=VWg67LTg1b67abm5wjiRnQ",
+                link: "https://vnexpress.net/hang-bay-hang-dau-my-tro-lai-viet-nam-4956462.html",
+                date: "27/10/2025 19:01"
+            },
+            {
+                title: "Startup Mỹ biến nhôm thành siêu nhiên liệu thay xăng",
+                description: "Cựu thành viên NASA Peter Godart lập startup dùng nhôm làm nhiên liệu thay xăng và diesel, không thải carbon.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/25/inthelab-07-1-0cb1e5-176136744-5119-4112-1761368016.png?w=1200&h=0&q=100&dpr=1&fit=crop&s=2k_yOd-LXed2IKCdYqDX6w",
+                link: "https://vnexpress.net/startup-my-bien-nhom-thanh-sieu-nhien-lieu-thay-xang-hieu-suat-gap-8-hydrogen-4955664.html",
+                date: "25/10/2025 13:49"
+            },
+            {
+                title: "FPT sở hữu lượng tiền gửi kỷ lục",
+                description: "Tập đoàn FPT sở hữu gần 37.000 tỷ đồng tiền mặt và gửi ngân hàng, cao nhất từ trước đến nay, chiếm khoảng 45% tổng tài sản.",
+                image: "https://i1-kinhdoanh.vnecdn.net/2025/10/27/SONR1257641816249771551200x0-1-3141-9871-1761502305.png?w=1200&h=0&q=100&dpr=1&fit=crop&s=8CUpo5q8OF7eJ7GFI-XUXg",
+                link: "https://vnexpress.net/fpt-so-huu-luong-tien-gui-ky-luc-4956041.html",
+                date: "27/10/2025 05:47"
+            }
+        ];
+
+        function renderNews(filteredData = newsData) {
+            const newsGrid = document.getElementById('newsGrid');
+            newsGrid.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                newsGrid.innerHTML = '<div class="loading">Không tìm thấy tin tức phù hợp</div>';
+                return;
+            }
+
+            filteredData.forEach(news => {
+                const card = document.createElement('div');
+                card.className = 'news-card';
+                card.onclick = () => window.open(news.link, '_blank');
+                
+                card.innerHTML = `
+                    <img src="${news.image}" alt="${news.title}" class="news-image" onerror="this.src='https://via.placeholder.com/400x200?text=VnExpress'">
+                    <div class="news-content">
+                        <h2 class="news-title">${news.title}</h2>
+                        <p class="news-description">${news.description}</p>
+                        <div class="news-meta">
+                            <span class="news-date">📅 ${news.date}</span>
+                            <a href="${news.link}" class="read-more" target="_blank" onclick="event.stopPropagation()">Đọc thêm</a>
+                        </div>
+                    </div>
+                `;
+                
+                newsGrid.appendChild(card);
+            });
+        }
+
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = newsData.filter(news => 
+                news.title.toLowerCase().includes(searchTerm) || 
+                news.description.toLowerCase().includes(searchTerm)
+            );
+            renderNews(filtered);
+        });
+
+        renderNews();
+    </script>
+</body>
+</html>
