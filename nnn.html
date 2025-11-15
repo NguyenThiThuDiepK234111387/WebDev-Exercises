@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comic AI Creator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Comic+Neue:wght@400;700&family=Bangers&family=Permanent+Marker&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; margin:0; padding:0; }
+        @media print {
+            header, .control-panel, .no-print { display: none !important; }
+            .canvas-area { width: 100% !important; }
+            .comic-panel { page-break-inside: avoid; margin: 20px 0; }
+        }
+        .comic-panel {
+            border: 6px solid #000 !important;
+            border-radius: 8px;
+            box-shadow: 0 4px 0 #000;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1 / 1;
+        }
+        .comic-panel img { width: 100%; height: 100%; object-fit: cover; }
+        .speech-bubble {
+            position: absolute;
+            z-index: 10;
+            min-width: 80px;
+            min-height: 60px;
+            resize: both;
+            overflow: visible;
+            border: 2px dashed transparent;
+            cursor: move;
+            background: transparent;
+            user-select: none;
+        }
+        .speech-bubble:hover, .speech-bubble.selected { 
+            border-color: #9333ea !important; 
+            resize: both;
+            overflow: visible;
+        }
+        .speech-bubble .bubble-svg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .speech-bubble .bubble-text {
+            position: absolute;
+            top: 20px; left: 20px; right: 20px; bottom: 20px;
+            background: transparent;
+            border: none;
+            outline: none;
+            resize: none;
+            text-align: center;
+            font-size: 18px;
+            color: #000;
+            font-family: 'Comic Neue', cursive;
+            z-index: 2;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+            overflow: hidden;
+            word-wrap: break-word;
+            padding: 0;
+            margin: 0;
+        }
+        .speech-bubble .delete-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 24px;
+            height: 24px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 3;
+            pointer-events: auto;
+        }
+        .speech-bubble:hover .delete-btn,
+        .speech-bubble.selected .delete-btn { display: flex; }
+
+        .resize-handle {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            background: #9333ea;
+            border-radius: 50%;
+            cursor: se-resize;
+            z-index: 4;
+            display: none;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .speech-bubble:hover .resize-handle,
+        .speech-bubble.selected .resize-handle { display: block !important; }
+
+        .generated-image {
+            width: 100px; height: 100px;
+            object-fit: cover;
+            border: 3px solid #9333ea;
+            border-radius: 8px;
+            cursor: move;
+            margin: 4px;
+            box-shadow: 0 2px 0 #000;
+        }
+        .generated-image:hover { transform: scale(1.05); }
+        .panel-container { transition: transform 0.3s ease; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100 min-h-screen">
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z"></path></svg>
+                </div>
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Comic AI Creator</h1>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="printComic()" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg flex items-center gap-2 transition">In</button>
+                <button onclick="saveComic()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 transition">Lưu</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div class="lg:col-span-1 space-y-4 control-panel">
+                <div class="bg-white rounded-xl shadow-lg p-5">
+                    <h3 class="font-bold text-lg mb-4 text-gray-800">Cài đặt</h3>
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">Bố cục</label>
+                        <select id="layoutSelect" onchange="changeLayout()" class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition">
+                            <option value="grid-1">1 ô</option>
+                            <option value="grid-2">2 ô dọc</option>
+                            <option value="grid-2x2" selected>2x2 (4 ô)</option>
+                            <option value="grid-3">3 ô dọc</option>
+                            <option value="grid-4">2x3 (6 ô)</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">Câu chuyện (mỗi dòng = 1 ảnh):</label>
+                        <textarea id="storyInput" placeholder="Nhập từng cảnh..." class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition resize-none" rows="6"></textarea>
+                    </div>
+                    <button onclick="generateImages()" class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-lg transition shadow-lg">Tạo Ảnh AI</button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-5">
+                    <h3 class="font-bold text-lg mb-4 text-gray-800">Ảnh đã tạo</h3>
+                    <div id="generatedImages" class="flex flex-wrap justify-center"><p class="text-gray-500 text-sm">Chưa có ảnh</p></div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-5">
+                    <h3 class="font-bold text-lg mb-4 text-gray-800">Khung thoại (kéo + resize)</h3>
+                    <div class="max-h-96 overflow-y-auto pr-2">
+                        <div class="grid grid-cols-3 gap-2">
+                            <!-- (giữ nguyên các khung thoại như trước) -->
+                            <div draggable="true" ondragstart="dragBubble(event,'speech-round')" class="cursor-move p-2 bg-white border-2 border-gray-300 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><ellipse cx="50" cy="35" rx="45" ry="30" fill="white" stroke="black" stroke-width="2"/><circle cx="40" cy="60" r="4" fill="white" stroke="black" stroke-width="2"/><circle cx="32" cy="68" r="2" fill="white" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Tròn</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'speech-oval')" class="cursor-move p-2 bg-white border-2 border-gray-300 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><ellipse cx="50" cy="35" rx="48" ry="32" fill="white" stroke="black" stroke-width="2"/><path d="M 30 60 L 20 75 L 35 65 Z" fill="white" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Oval</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'speech-rect')" class="cursor-move p-2 bg-white border-2 border-gray-300 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><rect x="5" y="10" width="90" height="45" rx="5" fill="white" stroke="black" stroke-width="2"/><path d="M 25 55 L 15 75 L 35 60 Z" fill="white" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Vuông</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'thought-cloud')" class="cursor-move p-2 bg-white border-2 border-gray-300 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><circle cx="35" cy="30" r="18" fill="white" stroke="black" stroke-width="2"/><circle cx="55" cy="25" r="15" fill="white" stroke="black" stroke-width="2"/><circle cx="68" cy="35" r="12" fill="white" stroke="black" stroke-width="2"/><circle cx="30" cy="60" r="6" fill="white" stroke="black" stroke-width="2"/><circle cx="20" cy="70" r="3" fill="white" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Mây</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'thought-scallop')" class="cursor-move p-2 bg-white border-2 border-gray-300 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><path d="M 20 35 Q 15 20 25 15 Q 35 10 45 15 Q 55 10 65 15 Q 75 20 80 35 Q 75 50 65 55 Q 55 60 45 55 Q 35 60 25 55 Q 15 50 20 35" fill="white" stroke="black" stroke-width="2"/><circle cx="25" cy="62" r="5" fill="white" stroke="black" stroke-width="2"/><circle cx="18" cy="72" r="2.5" fill="white" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Vòng cung</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'thought-simple')" class="cursor-move p-2 bg-white border-2 border-gray-300 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><circle cx="50" cy="30" r="25" fill="white" stroke="black" stroke-width="2"/><circle cx="35" cy="58" r="6" fill="white" stroke="black" stroke-width="2"/><circle cx="25" cy="68" r="3" fill="white" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Tròn đơn</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'shout-spiky')" class="cursor-move p-2 bg-yellow-50 border-2 border-yellow-400 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><path d="M 50 10 L 55 20 L 65 15 L 65 25 L 75 25 L 70 35 L 80 40 L 70 45 L 75 55 L 65 50 L 65 60 L 55 55 L 50 65 L 45 55 L 35 60 L 35 50 L 25 55 L 30 45 L 20 40 L 30 35 L 25 25 L 35 25 L 35 15 L 45 20 Z" fill="#FEF08A" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Hét</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'shout-burst')" class="cursor-move p-2 bg-red-50 border-2 border-red-400 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><path d="M 50 8 L 53 25 L 68 18 L 60 32 L 78 35 L 63 43 L 75 57 L 58 52 L 55 68 L 48 53 L 35 65 L 38 49 L 22 52 L 32 38 L 15 32 L 32 28 L 25 13 L 40 22 Z" fill="#FEE2E2" stroke="black" stroke-width="2.5"/></svg><div class="text-xs font-semibold text-center mt-1">Nổ</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'shout-jagged')" class="cursor-move p-2 bg-orange-50 border-2 border-orange-400 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><path d="M 20 35 L 25 25 L 30 35 L 38 22 L 43 35 L 50 20 L 57 35 L 62 22 L 70 35 L 75 25 L 80 35 L 80 50 L 75 55 L 70 50 L 62 58 L 57 50 L 50 60 L 43 50 L 38 58 L 30 50 L 25 55 L 20 50 Z" fill="#FFEDD5" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Răng cưa</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'whisper-dashed')" class="cursor-move p-2 bg-gray-50 border-2 border-gray-300 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><ellipse cx="50" cy="35" rx="45" ry="28" fill="white" stroke="black" stroke-width="2" stroke-dasharray="5,3"/><path d="M 30 58 L 22 72 L 35 63" fill="white" stroke="black" stroke-width="2" stroke-dasharray="5,3"/></svg><div class="text-xs font-semibold text-center mt-1">Thì thầm</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'caption-box')" class="cursor-move p-2 bg-yellow-50 border-2 border-yellow-500 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><rect x="10" y="20" width="80" height="40" fill="#FEFCE8" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Chú thích</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'narration-box')" class="cursor-move p-2 bg-blue-50 border-2 border-blue-400 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><rect x="10" y="20" width="80" height="40" rx="3" fill="#DBEAFE" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Tường thuật</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'speech-rounded')" class="cursor-move p-2 bg-white border-2 border-gray-300 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><rect x="10" y="15" width="80" height="38" rx="19" fill="white" stroke="black" stroke-width="2"/><path d="M 25 53 L 18 70 L 32 58 Z" fill="white" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Viên thuốc</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'speech-double')" class="cursor-move p-2 bg-white border-2 border-gray-300 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><ellipse cx="50" cy="32" rx="43" ry="27" fill="white" stroke="black" stroke-width="2"/><ellipse cx="50" cy="32" rx="38" ry="22" fill="white" stroke="black" stroke-width="1.5"/><path d="M 28 55 L 20 70 L 35 60 Z" fill="white" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Đôi</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'heart-bubble')" class="cursor-move p-2 bg-pink-50 border-2 border-pink-400 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><path d="M 50 60 Q 35 45 30 35 Q 28 25 35 20 Q 43 15 50 25 Q 57 15 65 20 Q 72 25 70 35 Q 65 45 50 60" fill="white" stroke="black" stroke-width="2"/></svg><div class="text-xs font-semibold text-center mt-1">Tim</div></div>
+                            <div draggable="true" ondragstart="dragBubble(event,'shout-strong')" class="cursor-move p-2 bg-red-100 border-2 border-red-600 rounded-lg hover:shadow-lg transition"><svg viewBox="0 0 100 80" class="w-full h-12"><path d="M 50 5 L 60 20 L 75 10 L 70 30 L 85 25 L 75 40 L 90 45 L 75 50 L 85 65 L 70 60 L 75 80 L 60 70 L 50 85 L 40 70 L 25 80 L 30 60 L 15 65 L 25 50 L 10 45 L 25 40 L 15 25 L 30 30 L 25 10 L 40 20 Z" fill="#FECACA" stroke="black" stroke-width="3"/></svg><div class="text-xs font-semibold text-center mt-1">Hét mạnh</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-5">
+                    <h3 class="font-bold text-lg mb-4 text-gray-800">Định dạng chữ (khung đang chọn)</h3>
+                    <div class="space-y-3">
+                        <div><label class="block text-sm font-semibold mb-1">Cỡ chữ</label><input type="range" id="fontSize" min="12" max="48" value="18" class="w-full" oninput="updateSelectedTextFormat()"></div>
+                        <div><label class="block text-sm font-semibold mb-1">Màu chữ</label><input type="color" id="textColor" value="#000000" class="w-full h-10 rounded" oninput="updateSelectedTextFormat()"></div>
+                        <div class="flex gap-2">
+                            <button onclick="toggleBold()" id="boldBtn" class="flex-1 py-2 border rounded">B</button>
+                            <button onclick="toggleItalic()" id="italicBtn" class="flex-1 py-2 border rounded">I</button>
+                            <button onclick="toggleUnderline()" id="underlineBtn" class="flex-1 py-2 border rounded">U</button>
+                        </div>
+                        <div><label class="block text-sm font-semibold mb-1">Font</label>
+                            <select id="fontFamily" onchange="updateSelectedTextFormat()" class="w-full px-3 py-2 border rounded">
+                                <option value="Comic Neue">Comic</option>
+                                <option value="Bangers">Bangers</option>
+                                <option value="Permanent Marker">Marker</option>
+                                <option value="Caveat">Caveat</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-5">
+                    <h3 class="font-bold text-lg mb-4 text-gray-800">Zoom</h3>
+                    <input type="range" id="zoomSlider" min="50" max="150" value="100" class="w-full" oninput="updateZoom()">
+                    <div class="text-center mt-2" id="zoomValue">100%</div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 canvas-area">
+                <div class="bg-white rounded-xl shadow-2xl p-8">
+                    <div id="comicCanvas" class="grid grid-cols-2 gap-6 panel-container" style="transform:scale(1);transform-origin:top left;">
+                        <!-- Panels will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'YOUR_OPENAI_API_KEY_HERE';
+        let selectedBubble = null;
+        let isDragging = false;
+        let isResizing = false;
+        let dragOffset = {x:0,y:0};
+        let resizeStart = {w:0,h:0,x:0,y:0};
+        let isBold = false, isItalic = false, isUnderline = false;
+
+        window.onload = () => changeLayout();
+
+        function changeLayout() {
+            const layout = document.getElementById('layoutSelect').value;
+            const canvas = document.getElementById('comicCanvas');
+            const layouts = {
+                'grid-1':{cols:'grid-cols-1',count:1},
+                'grid-2':{cols:'grid-cols-1',count:2},
+                'grid-2x2':{cols:'grid-cols-2',count:4},
+                'grid-3':{cols:'grid-cols-1',count:3},
+                'grid-4':{cols:'grid-cols-2',count:6}
+            };
+            const cfg = layouts[layout];
+            canvas.className = `grid ${cfg.cols} gap-6 panel-container`;
+            canvas.innerHTML = '';
+            for(let i=1;i<=cfg.count;i++){
+                const p = createPanel(i);
+                canvas.appendChild(p);
+            }
+            updateZoom();
+        }
+
+        function createPanel(id){
+            const p = document.createElement('div');
+            p.className = 'comic-panel bg-gray-100 flex items-center justify-center relative';
+            p.id = 'panel-'+id;
+            p.innerHTML = `<div class="text-center text-gray-400">Ô ${id}</div>`;
+            p.addEventListener('dragover',e=>e.preventDefault());
+            p.addEventListener('drop',e=>handleDrop(e,id));
+            return p;
+        }
+
+        async function generateImages(){
+            const story = document.getElementById('storyInput').value.trim();
+            if(!story) return alert('Nhập câu chuyện!');
+            const scenes = story.split('\n').map(s=>s.trim()).filter(s=>s);
+            const container = document.getElementById('generatedImages');
+            container.innerHTML = '<p class="text-purple-600">Đang tạo...</p>';
+            const images = [];
+            for(const s of scenes){
+                try{ images.push(await generateImage(`Manga panel: ${s}. Colorful anime style, detailed.`)); }
+                catch{ images.push(null); }
+            }
+            container.innerHTML = '';
+            images.forEach((url,i)=>{
+                if(url){
+                    const img = document.createElement('img');
+                    img.src = url; img.className='generated-image'; img.draggable=true;
+                    img.ondragstart=e=>e.dataTransfer.setData('imageUrl',url);
+                    container.appendChild(img);
+                }
+            });
+        }
+
+        async function generateImage(p){
+            const res = await fetch('https://api.openai.com/v1/images/generations',{
+                method:'POST',
+                headers:{'Authorization':`Bearer ${API_KEY}`,'Content-Type':'application/json'},
+                body:JSON.stringify({model:'dall-e-3',prompt:p,size:'1024x1024',quality:'hd'})
+            });
+            const d = await res.json();
+            return d.data[0].url;
+        }
+
+        function handleDrop(e,panelId){
+            e.preventDefault();
+            const img = e.dataTransfer.getData('imageUrl');
+            const type = e.dataTransfer.getData('bubbleType');
+            if(img){
+                const p = document.getElementById('panel-'+panelId);
+                p.innerHTML = `<img src="${img}" class="w-full h-full object-cover">`;
+            }
+            if(type){
+                const r = e.target.getBoundingClientRect();
+                const x = e.clientX - r.left - 75;
+                const y = e.clientY - r.top - 60;
+                createBubble(panelId,type,x,y);
+            }
+        }
+
+        function dragBubble(e,t){ e.dataTransfer.setData('bubbleType',t); }
+
+        function createBubble(panelId,type,x,y){
+            const panel = document.getElementById('panel-'+panelId);
+            const b = document.createElement('div');
+            const id = 'bubble-'+Date.now();
+            b.id = id; b.className='speech-bubble';
+            b.style.left = x+'px'; b.style.top = y+'px';
+            b.style.width='150px'; b.style.height='120px';
+
+            const svg = getSVG(type);
+            const ta = document.createElement('textarea');
+            ta.className='bubble-text'; ta.placeholder='Nhập thoại...';
+            ta.addEventListener('input', autoResizeText);
+
+            const handle = document.createElement('div');
+            handle.className = 'resize-handle';
+
+            b.innerHTML = `<div class="bubble-svg">${svg}</div>`;
+            b.appendChild(ta);
+            b.appendChild(handle);
+            b.innerHTML += `<div class="delete-btn" onclick="deleteBubble('${id}')">×</div>`;
+
+            // Click to select
+            b.addEventListener('click',e=>{
+                if(e.target.classList.contains('bubble-text')||e.target.classList.contains('delete-btn')||e.target.classList.contains('resize-handle')) return;
+                document.querySelectorAll('.speech-bubble').forEach(bb=>bb.classList.remove('selected'));
+                b.classList.add('selected'); selectedBubble=b; loadSelectedFormat();
+            });
+
+            // Drag
+            b.addEventListener('mousedown',e=>{
+                if(e.target.classList.contains('bubble-text')||e.target.classList.contains('delete-btn')||e.target.classList.contains('resize-handle')) return;
+                isDragging=true;
+                const r = b.getBoundingClientRect();
+                dragOffset.x = e.clientX - r.left;
+                dragOffset.y = e.clientY - r.top;
+                document.addEventListener('mousemove',moveDrag);
+                document.addEventListener('mouseup',stopDrag);
+            });
+
+            // Resize bằng nút kéo
+            handle.addEventListener('mousedown', e => {
+                e.stopPropagation();
+                e.preventDefault();
+                isResizing = true;
+                const rect = b.getBoundingClientRect();
+                resizeStart.w = rect.width;
+                resizeStart.h = rect.height;
+                resizeStart.x = e.clientX;
+                resizeStart.y = e.clientY;
+                document.addEventListener('mousemove', doResize);
+                document.addEventListener('mouseup', stopResize);
+            });
+
+            function moveDrag(e){
+                if(!isDragging) return;
+                const pr = panel.getBoundingClientRect();
+                b.style.left = (e.clientX - pr.left - dragOffset.x)+'px';
+                b.style.top = (e.clientY - pr.top - dragOffset.y)+'px';
+            }
+
+            function doResize(e) {
+                if (!isResizing) return;
+                const dx = e.clientX - resizeStart.x;
+                const dy = e.clientY - resizeStart.y;
+                const newW = Math.max(80, resizeStart.w + dx);
+                const newH = Math.max(60, resizeStart.h + dy);
+                b.style.width = newW + 'px';
+                b.style.height = newH + 'px';
+                autoResizeText.call(ta);
+            }
+
+            function stopDrag(){ isDragging=false; document.removeEventListener('mousemove',moveDrag); document.removeEventListener('mouseup',stopDrag); }
+            function stopResize(){ isResizing=false; document.removeEventListener('mousemove',doResize); document.removeEventListener('mouseup',stopResize); }
+
+            panel.appendChild(b);
+            autoResizeText.call(ta);
+        }
+
+        function autoResizeText(){
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight + 10) + 'px';
+        }
+
+        function deleteBubble(id){
+            const el = document.getElementById(id);
+            if(el===selectedBubble) selectedBubble=null;
+            el?.remove();
+        }
+
+        function updateSelectedTextFormat(){
+            if(!selectedBubble) return;
+            const ta = selectedBubble.querySelector('.bubble-text');
+            const sz = document.getElementById('fontSize').value;
+            const col = document.getElementById('textColor').value;
+            const fam = document.getElementById('fontFamily').value;
+            ta.style.fontSize = sz+'px';
+            ta.style.color = col;
+            ta.style.fontFamily = `'${fam}'`;
+            ta.style.fontWeight = isBold?'bold':'normal';
+            ta.style.fontStyle = isItalic?'italic':'normal';
+            ta.style.textDecoration = isUnderline?'underline':'none';
+            autoResizeText.call(ta);
+        }
+
+        function loadSelectedFormat(){
+            if(!selectedBubble) return;
+            const ta = selectedBubble.querySelector('.bubble-text');
+            document.getElementById('fontSize').value = parseInt(ta.style.fontSize)||18;
+            document.getElementById('textColor').value = ta.style.color||'#000000';
+            document.getElementById('fontFamily').value = (ta.style.fontFamily||'Comic Neue').replace(/['"]/g,'');
+            isBold = ta.style.fontWeight==='bold';
+            isItalic = ta.style.fontStyle==='italic';
+            isUnderline = ta.style.textDecoration.includes('underline');
+            updateButtons();
+        }
+
+        function toggleBold(){ isBold=!isBold; updateButtons(); updateSelectedTextFormat(); }
+        function toggleItalic(){ isItalic=!isItalic; updateButtons(); updateSelectedTextFormat(); }
+        function toggleUnderline(){ isUnderline=!isUnderline; updateButtons(); updateSelectedTextFormat(); }
+
+        function updateButtons(){
+            const bb = document.getElementById('boldBtn');
+            const ib = document.getElementById('italicBtn');
+            const ub = document.getElementById('underlineBtn');
+            bb.className = isBold?'flex-1 py-2 bg-purple-600 text-white rounded':'flex-1 py-2 border rounded';
+            ib.className = isItalic?'flex-1 py-2 bg-purple-600 text-white rounded':'flex-1 py-2 border rounded';
+            ub.className = isUnderline?'flex-1 py-2 bg-purple-600 text-white rounded':'flex-1 py-2 border rounded';
+        }
+
+        function updateZoom(){
+            const z = document.getElementById('zoomSlider').value;
+            document.getElementById('zoomValue').textContent = z+'%';
+            document.querySelector('.panel-container').style.transform = `scale(${z/100})`;
+        }
+
+        function printComic(){ window.print(); }
+        function saveComic(){ alert('Dùng In hoặc chụp màn hình!'); }
+
+        function getSVG(t){
+            const s = {
+                'speech-round':`<svg viewBox="0 0 100 80" class="w-full h-full"><ellipse cx="50" cy="35" rx="45" ry="30" fill="white" stroke="black" stroke-width="2"/><circle cx="40" cy="60" r="4" fill="white" stroke="black" stroke-width="2"/><circle cx="32" cy="68" r="2" fill="white" stroke="black" stroke-width="2"/></svg>`,
+                'speech-oval':`<svg viewBox="0 0 100 80" class="w-full h-full"><ellipse cx="50" cy="35" rx="48" ry="32" fill="white" stroke="black" stroke-width="2"/><path d="M 30 60 L 20 75 L 35 65 Z" fill="white" stroke="black" stroke-width="2"/></svg>`,
+                'speech-rect':`<svg viewBox="0 0 100 80" class="w-full h-full"><rect x="5" y="10" width="90" height="45" rx="5" fill="white" stroke="black" stroke-width="2"/><path d="M 25 55 L 15 75 L 35 60 Z" fill="white" stroke="black" stroke-width="2"/></svg>`,
+                'thought-cloud':`<svg viewBox="0 0 100 80" class="w-full h-full"><circle cx="35" cy="30" r="18" fill="white" stroke="black" stroke-width="2"/><circle cx="55" cy="25" r="15" fill="white" stroke="black" stroke-width="2"/><circle cx="68" cy="35" r="12" fill="white" stroke="black" stroke-width="2"/><circle cx="30" cy="60" r="6" fill="white" stroke="black" stroke-width="2"/><circle cx="20" cy="70" r="3" fill="white" stroke="black" stroke-width="2"/></svg>`,
+                'thought-scallop':`<svg viewBox="0 0 100 80" class="w-full h-full"><path d="M 20 35 Q 15 20 25 15 Q 35 10 45 15 Q 55 10 65 15 Q 75 20 80 35 Q 75 50 65 55 Q 55 60 45 55 Q 35 60 25 55 Q 15 50 20 35" fill="white" stroke="black" stroke-width="2"/><circle cx="25" cy="62" r="5" fill="white" stroke="black" stroke-width="2"/><circle cx="18" cy="72" r="2.5" fill="white" stroke="black" stroke-width="2"/></svg>`,
+                'thought-simple':`<svg viewBox="0 0 100 80" class="w-full h-full"><circle cx="50" cy="30" r="25" fill="white" stroke="black" stroke-width="2"/><circle cx="35" cy="58" r="6" fill="white" stroke="black" stroke-width="2"/><circle cx="25" cy="68" r="3" fill="white" stroke="black" stroke-width="2"/></svg>`,
+                'shout-spiky':`<svg viewBox="0 0 100 80" class="w-full h-full"><path d="M 50 10 L 55 20 L 65 15 L 65 25 L 75 25 L 70 35 L 80 40 L 70 45 L 75 55 L 65 50 L 65 60 L 55 55 L 50 65 L 45 55 L 35 60 L 35 50 L 25 55 L 30 45 L 20 40 L 30 35 L 25 25 L 35 25 L 35 15 L 45 20 Z" fill="#FEF08A" stroke="black" stroke-width="2"/></svg>`,
+                'shout-burst':`<svg viewBox="0 0 100 80" class="w-full h-full"><path d="M 50 8 L 53 25 L 68 18 L 60 32 L 78 35 L 63 43 L 75 57 L 58 52 L 55 68 L 48 53 L 35 65 L 38 49 L 22 52 L 32 38 L 15 32 L 32 28 L 25 13 L 40 22 Z" fill="#FEE2E2" stroke="black" stroke-width="2.5"/></svg>`,
+                'shout-jagged':`<svg viewBox="0 0 100 80" class="w-full h-full"><path d="M 20 35 L 25 25 L 30 35 L 38 22 L 43 35 L 50 20 L 57 35 L 62 22 L 70 35 L 75 25 L 80 35 L 80 50 L 75 55 L 70 50 L 62 58 L 57 50 L 50 60 L 43 50 L 38 58 L 30 50 L 25 55 L 20 50 Z" fill="#FFEDD5" stroke="black" stroke-width="2"/></svg>`,
+                'whisper-dashed':`<svg viewBox="0 0 100 80" class="w-full h-full"><ellipse cx="50" cy="35" rx="45" ry="28" fill="white" stroke="black" stroke-width="2" stroke-dasharray="5,3"/><path d="M 30 58 L 22 72 L 35 63" fill="white" stroke="black" stroke-width="2" stroke-dasharray="5,3"/></svg>`,
+                'caption-box':`<svg viewBox="0 0 100 80" class="w-full h-full"><rect x="10" y="20" width="80" height="40" fill="#FEFCE8" stroke="black" stroke-width="2"/></svg>`,
+                'narration-box':`<svg viewBox="0 0 100 80" class="w-full h-full"><rect x="10" y="20" width="80" height="40" rx="3" fill="#DBEAFE" stroke="black" stroke-width="2"/></svg>`,
+                'speech-rounded':`<svg viewBox="0 0 100 80" class="w-full h-full"><rect x="10" y="15" width="80" height="38" rx="19" fill="white" stroke="black" stroke-width="2"/><path d="M 25 53 L 18 70 L 32 58 Z" fill="white" stroke="black" stroke-width="2"/></svg>`,
+                'speech-double':`<svg viewBox="0 0 100 80" class="w-full h-full"><ellipse cx="50" cy="32" rx="43" ry="27" fill="white" stroke="black" stroke-width="2"/><ellipse cx="50" cy="32" rx="38" ry="22" fill="white" stroke="black" stroke-width="1.5"/><path d="M 28 55 L 20 70 L 35 60 Z" fill="white" stroke="black" stroke-width="2"/></svg>`,
+                'heart-bubble':`<svg viewBox="0 0 100 80" class="w-full h-full"><path d="M 50 60 Q 35 45 30 35 Q 28 25 35 20 Q 43 15 50 25 Q 57 15 65 20 Q 72 25 70 35 Q 65 45 50 60" fill="white" stroke="black" stroke-width="2"/></svg>`,
+                'shout-strong':`<svg viewBox="0 0 100 80" class="w-full h-full"><path d="M 50 5 L 60 20 L 75 10 L 70 30 L 85 25 L 75 40 L 90 45 L 75 50 L 85 65 L 70 60 L 75 80 L 60 70 L 50 85 L 40 70 L 25 80 L 30 60 L 15 65 L 25 50 L 10 45 L 25 40 L 15 25 L 30 30 L 25 10 L 40 20 Z" fill="#FECACA" stroke="black" stroke-width="3"/></svg>`
+            };
+            return s[t]||s['speech-round'];
+        }
+    </script>
+</body>
+</html>
